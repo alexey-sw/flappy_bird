@@ -7,7 +7,10 @@
 # score will be added later
 import load
 import pygame,sys
+bdimg = pygame.image.load("images/redbird-midflap.png")
 pygame.init()
+black = 0, 0, 0
+
 class Vec:
     def __init__(self,x,y):
         self.x = x
@@ -16,7 +19,7 @@ class Vec:
         self.x = self.x+addx
         self.y = self.y+addy
 class Bird:
-    stPos = {"x":50,"y":100}
+    stPos = Vec(50,100)
     def __init__(self,images):
         self.images = images # array
         self.coord = self.stPos
@@ -24,7 +27,7 @@ class Bird:
         return False
         # collision detection of bird with pipes and ground
     def update(self):
-        pass
+        scr.blit(self.images,(self.coord.x,self.coord.y))
     
 class Game:
     def __init__(self,bird,bg):
@@ -40,8 +43,10 @@ class Game:
     def update(self):
         if not self.bird.collide():
             self.bird.update()
+            pygame.display.flip()
 
-flappy_bird = Bird([1,2,4])
+
+flappy_bird = Bird(bdimg)
 game = Game(flappy_bird,"path/to/background")
 game.start()
 while 1:
@@ -49,6 +54,8 @@ while 1:
         if event.type == pygame.QUIT: sys.exit()
     if game.state == "lost":
         continue
+    scr.fill(black)
     game.update()
+    
     
 
