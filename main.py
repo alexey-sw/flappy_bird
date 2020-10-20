@@ -8,6 +8,8 @@
 import load
 import pygame,sys
 bdimg = pygame.image.load("images/redbird-midflap.png")
+bgimg = pygame.transform.scale(pygame.image.load("images/base.png"),(400,40))# changing size of our image
+#!scale (xsize,ysize)
 pygame.init()
 black = 0, 0, 0
 clock = pygame.time.Clock()
@@ -29,20 +31,25 @@ class Bird:
     whitespace_pressed = False
     def __init__(self,images):
         self.images = images # array
-        self.coord = Vec(50,300) # starting position
+        self.coord = Vec(50,50) # starting position
         self.speed = Vec(0,0) # starting speed
     def collide(self): # returns true if bird collides with pipes or ground
+        if self.coord.y>=360: # only checks the ground
+            return True
         return False
         # collision detection of bird with pipes and ground
     def update(self):
         if self.whitespace_pressed:
-            self.speed.add(0,5)
-            self.coord.y-=self.speed.y
-            
+            self.speed.add(0,5)   
             self.whitespace_pressed=False
-        self.speed.subtract(0,0.05)
+        if not self.stop_acc:
+            self.speed.subtract(0,0.05)
+        else:
+            self.speed.y = 0
         self.coord.y-=self.speed.y
         scr.blit(self.images,[self.coord.x,self.coord.y]) # we don't add any speed to x as long as 
+    def freeze(self):
+        scr.blit(self.images,[self.coord.x,self.coord.y])
 #
     
 class Game:
@@ -57,11 +64,13 @@ class Game:
         scr = pygame.display.set_mode((self.h,self.w))
         pygame.display.set_caption("Flappy bird")
     def update(self):
+        scr.blit(bgimg,(0,360))
         if not self.bird.collide():
             self.bird.update()
-            pygame.display.flip()
-
-
+        else:
+            self.bird.freeze()
+        pygame.display.flip()
+        
 flappy_bird = Bird(bdimg)
 game = Game(flappy_bird,"path/to/background")
 game.start()
@@ -71,12 +80,8 @@ while 1:
         if event.type == pygame.KEYDOWN:
             if event.key==pygame.K_SPACE:
                 flappy_bird.whitespace_pressed=True
-    if game.state == "lost":
-        continue
-    
     scr.fill(black)
     game.update()
-    print(clock.get_fps())
     clock.tick(FPS)
     
 
