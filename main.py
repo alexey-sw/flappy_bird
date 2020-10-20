@@ -7,8 +7,11 @@
 # score will be added later
 import load
 import pygame,sys
+globalh = 600
+globalw = 800
+bgh=60
 bdimg = pygame.image.load("images/redbird-midflap.png")
-bgimg = pygame.transform.scale(pygame.image.load("images/base.png"),(400,40))# changing size of our image
+bgimg = pygame.transform.scale(pygame.image.load("images/base.png"),(globalw,bgh))# changing size of our image
 #!scale (xsize,ysize)
 pygame.init()
 black = 0, 0, 0
@@ -34,7 +37,7 @@ class Bird:
         self.coord = Vec(50,50) # starting position
         self.speed = Vec(0,0) # starting speed
     def collide(self): # returns true if bird collides with pipes or ground
-        if self.coord.y>=360: # only checks the ground
+        if self.coord.y>=globalh-bgh: # only checks the ground
             return True
         return False
         # collision detection of bird with pipes and ground
@@ -42,10 +45,7 @@ class Bird:
         if self.whitespace_pressed:
             self.speed.add(0,5)   
             self.whitespace_pressed=False
-        if not self.stop_acc:
-            self.speed.subtract(0,0.05)
-        else:
-            self.speed.y = 0
+        self.speed.subtract(0,0.05)
         self.coord.y-=self.speed.y
         scr.blit(self.images,[self.coord.x,self.coord.y]) # we don't add any speed to x as long as 
     def freeze(self):
@@ -54,17 +54,20 @@ class Bird:
     
 class Game:
     def __init__(self,bird,bg):
-        self.bg = bg
+        self.bg = bgimg
         self.bird = bird
         self.state = "playing"
-        self.w = 400
-        self.h = 400
+        self.w = globalw
+        self.h = globalh
+        self.bgsize = Vec(self.bg.get_width(),self.bg.get_height()) #* size of our background
     def start(self):
         global scr
-        scr = pygame.display.set_mode((self.h,self.w))
+        print(self.bgsize.y)
+        print(self.h-self.bgsize.y)
+        scr = pygame.display.set_mode((self.w,self.h))
         pygame.display.set_caption("Flappy bird")
     def update(self):
-        scr.blit(bgimg,(0,360))
+        scr.blit(self.bg,(self.w-self.bgsize.x,self.h-self.bgsize.y))
         if not self.bird.collide():
             self.bird.update()
         else:
