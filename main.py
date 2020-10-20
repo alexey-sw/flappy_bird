@@ -7,6 +7,7 @@ display = pygame.display.set_mode( (288, 360) )
 
 pygame.display.set_caption("Flappy Bird")
 
+
 dispWidht = 288
 dispHeight = 360
 x = 50
