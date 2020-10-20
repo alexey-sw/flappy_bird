@@ -6,8 +6,7 @@
 
 # score will be added later
 import load
-# import keyboard from pynput
-import pygame
+import pygame,sys
 pygame.init()
 class Vec:
     def __init__(self,x,y):
@@ -17,27 +16,39 @@ class Vec:
         self.x = self.x+addx
         self.y = self.y+addy
 class Bird:
-    def __init__(self,images,coord):
-        self.images = images
-        self.coord = coord
+    stPos = {"x":50,"y":100}
+    def __init__(self,images):
+        self.images = images # array
+        self.coord = self.stPos
+    def collide(self,crd=stPos):
+        return False
+        # collision detection of bird with pipes and ground
+    def update(self):
+        pass
     
 class Game:
-    def __init__(self):
-        pass
-        # self.bg = bg
-        # self.bird = bird
-        # self.state = lost
-        # self.w = w
-        # self.h = h
+    def __init__(self,bird,bg):
+        self.bg = bg
+        self.bird = bird
+        self.state = "playing"
+        self.w = 400
+        self.h = 400
     def start(self):
         global scr
-        scr = pygame.display.set_mode((400,400))
+        scr = pygame.display.set_mode((self.h,self.w))
+        pygame.display.set_caption("Flappy bird")
+    def update(self):
+        if not self.bird.collide():
+            self.bird.update()
 
-
-game = Game()
+flappy_bird = Bird([1,2,4])
+game = Game(flappy_bird,"path/to/background")
 game.start()
 while 1:
     for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
     if game.state == "lost":
         continue
+    game.update()
+    
+
