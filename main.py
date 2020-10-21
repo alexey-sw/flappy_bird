@@ -9,7 +9,7 @@ import pygame
 import sys
 from load import *
 
-bdimg = pygame.image.load("images/redbird-midflap.png")
+
 bgimg = pygame.transform.scale(pygame.image.load("images/base.png"),(globalw,bgh))# changing size of our image
 #!scale (xsize,ysize)
 pygame.init()
