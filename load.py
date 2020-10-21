@@ -1,19 +1,29 @@
 import pygame
-import sys
 # *this file loads all the files of the game
 # * this file contains prescales all the images
-# * this file hitmaks
+# * this file hitmasks
+FPS = 120
+black = 0, 0, 0
+clock = pygame.time.Clock()
+globalh = 600
+globalw = 800
+bgh=60
 def load(): # function responsible for loading and scaling images
-    global numbers = []
+    global numbers
+    numbers = []
     for i in range(0,10):
-        numbers.append("images/{}.png".format(i))
+        numbers.append(pygame.image.load("images/{}.png".format(i)))
     
-    global birdimgs = []
-    birdimgs.append("images/redbird-downflap.png")
-    birdimgs.append("images/redbird-midflap.png")
-    birdimgs.append("images/redbird-upflap.png")
+    global birdimgs
+    birdimgs = {
+        "upfl":pygame.image.load("images/redbird-upflap.png"),
+        "dnfl":pygame.image.load("images/redbird-downflap.png"),
+        "midfl":pygame.image.load("images/redbird-midflap.png")
+        }
+
+    global bgimgs 
+    bgimgs={"bg":pygame.image.load("images/background.jpg"),"gnd":pygame.image.load("images/base.png")}
     
-    global bgimgs ={"bg":"images/background.jpg","gnd":"images/base.png"}
-    
-    global pipeimgs = {"nrml":"images/pipe-green.png","revr":"images/pipe-green-reversed.png"}
+    global pipeimgs
+    pipeimgs = {"nrml":pygame.image.load("images/pipe-green.png"),"revr":pygame.image.load("images/pipe-green-reversed.png")}
 load()
