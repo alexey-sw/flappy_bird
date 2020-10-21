@@ -6,7 +6,6 @@
 
 # score will be added later
 import load
-import pygame,sys
 globalh = 600
 globalw = 800
 bgh=60
