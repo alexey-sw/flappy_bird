@@ -5,19 +5,16 @@
 # game class contains methods for pipe generation(randomised, redrawal of all objects) and game start and game end
 
 # score will be added later
-import load
-import pygame,sys
-globalh = 600
-globalw = 800
-bgh=60
+import pygame
+import sys
+from load import *
+
 bdimg = pygame.image.load("images/redbird-midflap.png")
 bgimg = pygame.transform.scale(pygame.image.load("images/base.png"),(globalw,bgh))# changing size of our image
 #!scale (xsize,ysize)
 pygame.init()
-black = 0, 0, 0
-clock = pygame.time.Clock()
+
 # would be great to implement clock.get_fps()
-FPS = 120
 class Vec:
     def __init__(self,x,y):
         self.x = x
@@ -51,7 +48,6 @@ class Bird:
     def freeze(self):
         scr.blit(self.images,[self.coord.x,self.coord.y])
 #
-    
 class Game:
     def __init__(self,bird,bg):
         self.bg = bgimg
@@ -74,7 +70,7 @@ class Game:
             self.bird.freeze()
         pygame.display.flip()
         
-flappy_bird = Bird(bdimg)
+flappy_bird = Bird(birdimgs["upfl"])
 game = Game(flappy_bird,"path/to/background")
 game.start()
 while 1:
