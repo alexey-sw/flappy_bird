@@ -7,6 +7,8 @@ display = pygame.display.set_mode( (288, 360) )
 
 pygame.display.set_caption("Flappy Bird")
 
+backGround = [pygame.image.load('images/bg1.png')]
+greenPipe = [pygame.image.load('images/pipe-green.png')]
 
 dispWidht = 288
 dispHeight = 360
@@ -21,6 +23,10 @@ jumpCount = 10
 
 FPS = 60 # Создаем переменную FPS
 clock = pygame.time.Clock() # Создаем счетчик для FPS
+
+def drawDisp():
+    display.blit(backGround, (0, 0))
+    pygame.display.update()
 
 # Основной цикл игры
 while True:
@@ -42,11 +48,5 @@ while True:
     if keys[pygame.K_UP] and y > 0:
         y-=speed
 
-    display.fill((0, 0, 0))
-    pygame.draw.rect(display, (0, 255, 0), (x, y, width, height))
-
-
-    # Обновляем поверхность игры
-    # на каждом шаге основного цикла игры
-    pygame.display.update()
+    drawDisp()
     clock.tick(FPS) # Замедляем цикл до 60 выполнений в секунду
