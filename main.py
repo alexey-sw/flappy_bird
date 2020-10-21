@@ -16,7 +16,7 @@ display = pygame.display.set_mode( (dispWidht, dispHeight) )
 pygame.display.set_caption("Flappy Bird")
 
 backGround = pygame.transform.scale(pygame.image.load("images/bg1.png"),(dispWidht,dispHeight))
-greenPipe = [pygame.image.load('images/pipe-green.png')]
+greenPipe = pygame.transform.scale(pygame.image.load('images/pipe-green.png'), (52*2, 320*2))
 
 isJump = False
 jumpCount = 10
@@ -28,6 +28,11 @@ def drawDisp():
     display.blit(backGround, (0, 0))
     pygame.draw.rect(display, (0, 0, 0), (x, y, width, height))
     pygame.display.update()
+
+pipesX = []
+pipesY = []
+
+
 
 # Основной цикл игры
 while True:
