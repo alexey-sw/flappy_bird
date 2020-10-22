@@ -5,8 +5,8 @@ import pygame
 FPS = 60
 black = 0, 0, 0
 clock = pygame.time.Clock()
-globalh = 600
-globalw = 800
+globalh = 360*2 
+globalw = 288*2
 bgh=60
 def load(): # function responsible for loading and scaling images
     global numbers
