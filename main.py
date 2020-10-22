@@ -16,7 +16,10 @@ display = pygame.display.set_mode( (dispWidht, dispHeight) )
 pygame.display.set_caption("Flappy Bird")
 
 backGround = pygame.transform.scale(pygame.image.load("images/bg1.png"),(dispWidht,dispHeight))
-greenPipe = pygame.transform.scale(pygame.image.load('images/pipe-green.png'), (52*2, 320*2))
+greenPipe = pygame.transform.scale(pygame.image.load('images/pipe-green.png'), (52, 320)) #52 320
+greenPipeReversed = pygame.transform.scale(pygame.image.load('images/pipe-green-reversed.png'), (52, 320)) #52 320
+
+
 
 isJump = False
 jumpCount = 10
@@ -26,13 +29,21 @@ clock = pygame.time.Clock() # Создаем счетчик для FPS
 
 def drawDisp():
     display.blit(backGround, (0, 0))
+    display.blit(greenPipe, (300, 420)) 
+    display.blit(greenPipe, (430, 420)) 
+    display.blit(greenPipeReversed, (300, -20))
     pygame.draw.rect(display, (0, 0, 0), (x, y, width, height))
     pygame.display.update()
 
 pipesX = []
 pipesY = []
 
-
+pipeX = 350
+pipeY = 420
+for i in range(10):
+    pipesX.append(pipeX)
+    #pipesY.append()
+    pipeX += 50
 
 # Основной цикл игры
 while True:
