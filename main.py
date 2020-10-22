@@ -9,7 +9,6 @@ import pygame
 import sys
 from load import *
 
-bdimg = pygame.image.load("images/redbird-midflap.png")
 bgimg = pygame.transform.scale(pygame.image.load("images/base.png"),(globalw,bgh))# changing size of our image
 #!scale (xsize,ysize)
 pygame.init()
@@ -28,6 +27,7 @@ class Vec:
     def __repr__(self):
         return "{} {}".format(self.x,self.y)
 class Bird:
+    flapcount = 0
     whitespace_pressed = False
     def __init__(self,images):
         self.images = images # array
@@ -39,14 +39,17 @@ class Bird:
         return False
         # collision detection of bird with pipes and ground
     def update(self):
+        self.flapcount+=0.2
+        if self.flapcount>998:
+            self.flapcount = 0
         if self.whitespace_pressed:
-            self.speed.add(0,5)   
+            self.speed.add(0,8)   
             self.whitespace_pressed=False
-        self.speed.subtract(0,0.05)
+        self.speed.subtract(0,0.4)
         self.coord.y-=self.speed.y
-        scr.blit(self.images,[self.coord.x,self.coord.y]) # we don't add any speed to x as long as 
+        scr.blit(self.images[int(self.flapcount%3)],[self.coord.x,self.coord.y]) # we don't add any speed to x as long as 
     def freeze(self):
-        scr.blit(self.images,[self.coord.x,self.coord.y])
+        scr.blit(self.images[1],[self.coord.x,self.coord.y])
 #
 class Game:
     def __init__(self,bird,bg):
@@ -70,7 +73,7 @@ class Game:
             self.bird.freeze()
         pygame.display.flip()
         
-flappy_bird = Bird(birdimgs["upfl"])
+flappy_bird = Bird(birdimgs)
 game = Game(flappy_bird,"path/to/background")
 game.start()
 while 1:
