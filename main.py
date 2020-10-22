@@ -43,7 +43,7 @@ class Bird:
         if self.flapcount>998:
             self.flapcount = 0
         if self.whitespace_pressed:
-            self.speed.add(0,8)   
+            self.speed.add(0,9)   
             self.whitespace_pressed=False
         self.speed.subtract(0,0.4)
         self.coord.y-=self.speed.y
@@ -59,6 +59,7 @@ class Game:
         self.w = globalw
         self.h = globalh
         self.bgsize = Vec(self.bg.get_width(),self.bg.get_height()) #* size of our background
+        self.objects = [self.bird]    # for obj in self objects: i.update
     def start(self):
         global scr
         print(self.bgsize.y)
