@@ -29,9 +29,9 @@ clock = pygame.time.Clock() # Создаем счетчик для FPS
 
 def drawDisp():
     display.blit(backGround, (0, 0))
-    display.blit(greenPipe, (300, 420)) 
-    display.blit(greenPipe, (430, 420)) 
-    display.blit(greenPipeReversed, (300, -20))
+    for i in range(10):
+        display.blit(greenPipe, (pipesX[i], 420)) 
+        display.blit(greenPipeReversed, (pipesX[i], -20))
     pygame.draw.rect(display, (0, 0, 0), (x, y, width, height))
     pygame.display.update()
 
@@ -42,11 +42,18 @@ pipeX = 350
 pipeY = 420
 for i in range(10):
     pipesX.append(pipeX)
+    pipesY.append(pipeX)
     #pipesY.append()
-    pipeX += 50
+    pipeX += 100
 
 # Основной цикл игры
 while True:
+    for i in range(len(pipesX)):
+        if pipesX[i] < 0:
+            pipesX= pipesX[1::]
+            pipesX.append(pipeX)
+            pipeX += 100
+        pipesX[i] -= 2
     # Ждем события (действия пользователя)
     for event in pygame.event.get():
         # Если нажали на крестик,
