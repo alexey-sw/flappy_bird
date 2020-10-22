@@ -62,8 +62,6 @@ class Game:
         self.objects = [self.bird]    # for obj in self objects: i.update
     def start(self):
         global scr
-        print(self.bgsize.y)
-        print(self.h-self.bgsize.y)
         scr = pygame.display.set_mode((self.w,self.h))
         pygame.display.set_caption("Flappy bird")
     def update(self):
