@@ -2,7 +2,7 @@ import pygame
 # *this file loads all the files of the game
 # * this file contains prescales all the images
 # * this file hitmasks
-FPS = 120
+FPS = 60
 black = 0, 0, 0
 clock = pygame.time.Clock()
 globalh = 600
@@ -15,11 +15,11 @@ def load(): # function responsible for loading and scaling images
         numbers.append(pygame.image.load("images/{}.png".format(i)))
     
     global birdimgs
-    birdimgs = {
-        "upfl":pygame.image.load("images/redbird-upflap.png"),
-        "dnfl":pygame.image.load("images/redbird-downflap.png"),
-        "midfl":pygame.image.load("images/redbird-midflap.png")
-        }
+    birdimgs = [
+        pygame.image.load("images/redbird-upflap.png"),
+        pygame.image.load("images/redbird-downflap.png"),
+        pygame.image.load("images/redbird-midflap.png")
+        ]
 
     global bgimgs 
     bgimgs={"bg":pygame.image.load("images/background.jpg"),"gnd":pygame.image.load("images/base.png")}
