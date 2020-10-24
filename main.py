@@ -3,6 +3,11 @@
 # bird class has pictures of the bird, x,y as properties
 # bird contains methods for its update(x,y update),collision detection
 # game class contains methods for pipe generation(randomised, redrawal of all objects) and game start and game end
+# ? git stash apply - num of latest stash
+# ? git stash pop - applies latest stash and deletes it from the list
+# ? git stash clear
+# ? git stash list - outputs list of stashes
+
 
 # score will be added later
 import pygame
@@ -14,18 +19,7 @@ bgimg = pygame.transform.scale(pygame.image.load("images/base.png"),(globalw,bgh
 pygame.init()
 
 # would be great to implement clock.get_fps()
-class Vec:
-    def __init__(self,x,y):
-        self.x = x
-        self.y = y
-    def add(self,addx,addy):
-        self.x = self.x+addx
-        self.y = self.y+addy
-    def subtract(self,subtrx,subtry):
-        self.x-=subtrx
-        self.y-=subtry
-    def __repr__(self):
-        return "{} {}".format(self.x,self.y)
+
 class Bird:
     flapcount = 0
     whitespace_pressed = False
@@ -33,8 +27,9 @@ class Bird:
         self.images = images # array
         self.coord = Vec(50,50) # starting position
         self.speed = Vec(0,0) # starting speed
+        self.rect = birdrect
     def collide(self): # returns true if bird collides with pipes or ground
-        if self.coord.y>=globalh-bgh: # only checks the ground
+        if self.coord.y>=globalh-bgh:
             return True
         return False
         # collision detection of bird with pipes and ground
@@ -53,19 +48,19 @@ class Bird:
 #
 class Game:
     def __init__(self,bird,bg):
-        self.bg = bgimg
+        self.bg = bg
         self.bird = bird
         self.state = "playing"
         self.w = globalw
         self.h = globalh
-        self.bgsize = Vec(self.bg.get_width(),self.bg.get_height()) #* size of our background
+         #* size of our background
         self.objects = [self.bird]    # for obj in self objects: i.update
     def start(self):
         global scr
         scr = pygame.display.set_mode((self.w,self.h))
         pygame.display.set_caption("Flappy bird")
     def update(self):
-        scr.blit(self.bg,(self.w-self.bgsize.x,self.h-self.bgsize.y))
+        scr.blit(self.bg,(bgpos.x,bgpos.y))
         if not self.bird.collide():
             self.bird.update()
         else:
@@ -73,7 +68,7 @@ class Game:
         pygame.display.flip()
         
 flappy_bird = Bird(birdimgs)
-game = Game(flappy_bird,"path/to/background")
+game = Game(flappy_bird,bgimgs["gnd"])
 game.start()
 while 1:
     for event in pygame.event.get():
