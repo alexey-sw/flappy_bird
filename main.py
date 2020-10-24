@@ -48,19 +48,19 @@ class Bird:
 #
 class Game:
     def __init__(self,bird,bg):
-        self.bg = bgimg
+        self.bg = bg
         self.bird = bird
         self.state = "playing"
         self.w = globalw
         self.h = globalh
-        self.bgsize = Vec(self.bg.get_width(),self.bg.get_height()) #* size of our background
+         #* size of our background
         self.objects = [self.bird]    # for obj in self objects: i.update
     def start(self):
         global scr
         scr = pygame.display.set_mode((self.w,self.h))
         pygame.display.set_caption("Flappy bird")
     def update(self):
-        scr.blit(self.bg,(self.w-self.bgsize.x,self.h-self.bgsize.y))
+        scr.blit(self.bg,(bgpos.x,bgpos.y))
         if not self.bird.collide():
             self.bird.update()
         else:
@@ -68,7 +68,7 @@ class Game:
         pygame.display.flip()
         
 flappy_bird = Bird(birdimgs)
-game = Game(flappy_bird,"path/to/background")
+game = Game(flappy_bird,bgimgs["gnd"])
 game.start()
 while 1:
     for event in pygame.event.get():
