@@ -3,6 +3,11 @@
 # bird class has pictures of the bird, x,y as properties
 # bird contains methods for its update(x,y update),collision detection
 # game class contains methods for pipe generation(randomised, redrawal of all objects) and game start and game end
+# ? git stash apply - num of latest stash
+# ? git stash pop - applies latest stash and deletes it from the list
+# ? git stash clear
+# ? git stash list - outputs list of stashes
+
 
 # score will be added later
 import pygame
@@ -14,18 +19,7 @@ bgimg = pygame.transform.scale(pygame.image.load("images/base.png"),(globalw,bgh
 pygame.init()
 
 # would be great to implement clock.get_fps()
-class Vec:
-    def __init__(self,x,y):
-        self.x = x
-        self.y = y
-    def add(self,addx,addy):
-        self.x = self.x+addx
-        self.y = self.y+addy
-    def subtract(self,subtrx,subtry):
-        self.x-=subtrx
-        self.y-=subtry
-    def __repr__(self):
-        return "{} {}".format(self.x,self.y)
+
 class Bird:
     flapcount = 0
     whitespace_pressed = False
@@ -33,8 +27,9 @@ class Bird:
         self.images = images # array
         self.coord = Vec(50,50) # starting position
         self.speed = Vec(0,0) # starting speed
+        self.rect = birdrect
     def collide(self): # returns true if bird collides with pipes or ground
-        if self.coord.y>=globalh-bgh: # only checks the ground
+        if self.coord.y>=globalh-bgh:
             return True
         return False
         # collision detection of bird with pipes and ground
