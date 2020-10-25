@@ -1,8 +1,3 @@
-# will help us manage our coordinates for bird
-# where will be 3 classes in our game: bird vec and game
-# bird class has pictures of the bird, x,y as properties
-# bird contains methods for its update(x,y update),collision detection
-# game class contains methods for pipe generation(randomised, redrawal of all objects) and game start and game end
 # ? git stash apply - num of latest stash
 # ? git stash pop - applies latest stash and deletes it from the list
 # ? git stash clear
@@ -30,8 +25,8 @@ class Bird:
         self.speed = Vec(0, 0)  # starting speed
         self.rect = birdrect
 
-    def collide(self):  # returns true if bird collides with pipes or ground or ceiling
-        if self.rect.colliderect(gndrect):
+    def collide(self,another_rect):  # returns true if bird collides with pipes or ground or ceiling
+        if self.rect.colliderect(another_rect):
             return True
         return False
         # collision detection of bird with pipes and ground
@@ -61,17 +56,22 @@ class Bird:
 class Ground:
     def __init__(self, rect):
         self.rect = rect
-
+class Ceiling:
+    def __init__(self,rect):
+        self.rect = rect
 
 class Game:
-    def __init__(self, bird, gnd):
-        self.gnd = gnd
+    frozen = False
+    def __init__(self, bird, gndimg,gndobj):
+        self.gndimg = gndimg
+        self.gndobj = gndobj
+        self.ceiling = ceiling
         self.bird = bird
         self.state = "playing"
         self.w = globalw
         self.h = globalh
         # * size of our background
-        self.objects = []    # for obj in self objects: i.update
+        self.objects = [self.gndobj,self.ceiling]    # for obj in self objects: i.update
 
     def start(self):
         global scr
@@ -79,20 +79,27 @@ class Game:
         pygame.display.set_caption("Flappy bird")
 
     def update(self):
-        scr.blit(self.gnd, (gndpos.x, gndpos.y))
-        pygame.draw.rect(scr, (255, 0, 0), gndrect, 4)
-        pygame.draw.rect(scr, (255, 0, 0), birdrect, 4)
-
-        if not self.bird.collide():
+        scr.blit(self.gndimg, (gndpos.x, gndpos.y))
+        for obj in self.objects:
+            if not self.bird.collide(obj.rect):
+                pass
+            else:
+                self.bird.freeze()
+                self.frozen = True
+                break
+        if not self.frozen:
             self.bird.update()
-        else:
-            self.bird.freeze()
         pygame.display.flip()
 
-
+        # if not self.bird.collide():
+        #     self.bird.update()
+        # else:
+        #     self.bird.freeze()
+        # pygame.display.flip()
+ceiling = Ceiling(ceilingrect)
 ground = Ground(gndrect)
 flappy_bird = Bird(birdimgs)
-game = Game(flappy_bird, gndimgs["gnd"])
+game = Game(flappy_bird, gndimgs["gnd"],ground)
 game.start()
 while 1:
     for event in pygame.event.get():

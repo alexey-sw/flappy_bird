@@ -69,3 +69,4 @@ gndpos = Vec(0, globalh-gndsize.y)
 gndposrect = Vec(
     0+int(gndimgs["gnd"].get_width()/2), gndpos.y+int(gndsize.y/2))
 gndrect = getRect(gndimgs["gnd"], gndposrect)
+ceilingrect = pygame.Rect(0,-5,globalw,5)
