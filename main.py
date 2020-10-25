@@ -42,7 +42,7 @@ class Bird:
 
     def update(self):
         
-        self.coord.y = self.rect.y
+       
         self.flapcount += 0.2
         if self.flapcount > 998:
             self.flapcount = 0
@@ -50,14 +50,16 @@ class Bird:
             self.speed.add(0, 9)
             self.whitespace_pressed = False
         self.speed.subtract(0, 0.4)
-        self.rect.y-= self.speed.y
+        
+        self.coord.y-= self.speed.y
+        self.rect.y = self.coord.y
         
         # we don't add any speed to x as long as
         scr.blit(self.images[int(self.flapcount % 3)],
                  [self.coord.x, self.coord.y])
 
     def freeze(self):
-        scr.blit(self.images[1], [self.coord.x, self.coord.y])
+        scr.blit(self.images[1], [self.rect.x, self.rect.y])
 #
 
 
