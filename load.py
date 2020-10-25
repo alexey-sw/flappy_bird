@@ -7,7 +7,7 @@ black = 0, 0, 0
 clock = pygame.time.Clock()
 globalh = 360*2
 globalw = 288*2
-baseh = 60
+gndh = 60
 
 
 class Vec:
@@ -27,7 +27,7 @@ class Vec:
         return "{} {}".format(self.x, self.y)
 
 
-basesize = Vec(globalw, int(0.05*globalh))
+gndsize = Vec(globalw, int(0.05*globalh))
 
 
 def load():  # function responsible for loading and scaling images
@@ -43,9 +43,9 @@ def load():  # function responsible for loading and scaling images
         pygame.image.load("images/redbird-midflap.png")
     ]
 
-    global baseimgs
-    baseimgs = {"bgrnd": pygame.image.load("images/background.jpg"),
-                "gnd": pygame.transform.scale(pygame.image.load("images/base.png"), (basesize.x, basesize.y))}
+    global gndimgs
+    gndimgs = {"bgrnd": pygame.image.load("images/background.jpg"),
+               "gnd": pygame.transform.scale(pygame.image.load("images/gnd.png"), (gndsize.x, gndsize.y))}
 
     global pipeimgs
     pipeimgs = {"nrml": pygame.image.load(
@@ -57,7 +57,7 @@ load()
 #     birdrect =  birdimgs[0].get_rect()
 #     piperect = pipeimgs["nrml"].get_rect()
 #     piperectrev = pipeimgs["revr"].get_rect()
-#     gndrect = baseimgs["gnd"].get_rect()
+#     gndrect = gndimgs["gnd"].get_rect()
 
 
 def getRect(img, obj):
@@ -65,8 +65,7 @@ def getRect(img, obj):
 
 
 birdrect = getRect(birdimgs[0], Vec(50+int(birdimgs[0].get_width()/2), 50))
-basepos = Vec(0, globalh-basesize.y)
-baseposrect = Vec(0+int(baseimgs["gnd"].get_width()/2),basepos.y+int(basesize.y/2))
-baserect = getRect(baseimgs["gnd"], baseposrect)
-print(baseposrect)
-print(basepos)
+gndpos = Vec(0, globalh-gndsize.y)
+gndposrect = Vec(
+    0+int(gndimgs["gnd"].get_width()/2), gndpos.y+int(gndsize.y/2))
+gndrect = getRect(gndimgs["gnd"], gndposrect)

@@ -14,13 +14,9 @@ import pygame
 import sys
 from load import *
 import os
-os.environ['SDL_VIDEO_CENTERED'] = '1'
+os.environ['SDL_VIDEO_CENTERED'] = '1'  # to center the window
 
-baseimg = pygame.transform.scale(pygame.image.load(
-    "images/base.png"), (globalw, baseh))  # changing size of our image
-#!scale (xsize,ysize)
 pygame.init()
-
 # would be great to implement clock.get_fps()
 
 
@@ -35,14 +31,13 @@ class Bird:
         self.rect = birdrect
 
     def collide(self):  # returns true if bird collides with pipes or ground or ceiling
-        if self.rect.colliderect(baserect):
+        if self.rect.colliderect(gndrect):
             return True
         return False
         # collision detection of bird with pipes and ground
 
     def update(self):
-        
-       
+
         self.flapcount += 0.2
         if self.flapcount > 998:
             self.flapcount = 0
@@ -50,10 +45,10 @@ class Bird:
             self.speed.add(0, 9)
             self.whitespace_pressed = False
         self.speed.subtract(0, 0.4)
-        
-        self.coord.y-= self.speed.y
+
+        self.coord.y -= self.speed.y
         self.rect.y = self.coord.y
-        
+
         # we don't add any speed to x as long as
         scr.blit(self.images[int(self.flapcount % 3)],
                  [self.coord.x, self.coord.y])
@@ -63,9 +58,14 @@ class Bird:
 #
 
 
+class Ground:
+    def __init__(self, rect):
+        self.rect = rect
+
+
 class Game:
-    def __init__(self, bird, base):
-        self.base = base
+    def __init__(self, bird, gnd):
+        self.gnd = gnd
         self.bird = bird
         self.state = "playing"
         self.w = globalw
@@ -79,9 +79,9 @@ class Game:
         pygame.display.set_caption("Flappy bird")
 
     def update(self):
-        scr.blit(self.base, (basepos.x, basepos.y))
-        pygame.draw.rect(scr,(255,0,0),baserect,4)
-        pygame.draw.rect(scr,(255,0,0),birdrect,4)
+        scr.blit(self.gnd, (gndpos.x, gndpos.y))
+        pygame.draw.rect(scr, (255, 0, 0), gndrect, 4)
+        pygame.draw.rect(scr, (255, 0, 0), birdrect, 4)
 
         if not self.bird.collide():
             self.bird.update()
@@ -90,8 +90,9 @@ class Game:
         pygame.display.flip()
 
 
+ground = Ground(gndrect)
 flappy_bird = Bird(birdimgs)
-game = Game(flappy_bird, baseimgs["gnd"])
+game = Game(flappy_bird, gndimgs["gnd"])
 game.start()
 while 1:
     for event in pygame.event.get():
