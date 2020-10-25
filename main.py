@@ -18,6 +18,8 @@ pygame.init()
 class Bird:
     flapcount = 0
     whitespace_pressed = False
+    coefficient = 1
+    subtractor = 0.3
 
     def __init__(self, images):
         self.images = images  # array
@@ -37,9 +39,17 @@ class Bird:
         if self.flapcount > 998:
             self.flapcount = 0
         if self.whitespace_pressed:
-            self.speed.add(0, 9)
+            self.speed.add(0, 8*self.coefficient)
+            self.coefficient-=self.subtractor
+            self.subtractor+=0.1
             self.whitespace_pressed = False
         self.speed.subtract(0, 0.4)
+        if self.coefficient<1:
+            self.coefficient+=0.03
+        if self.subtractor>0:
+            self.subtractor-=0.02
+
+        
 
         self.coord.y -= self.speed.y
         self.rect.y = self.coord.y
