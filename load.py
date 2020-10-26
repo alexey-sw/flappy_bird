@@ -70,3 +70,5 @@ gndposrect = Vec(
     0+int(gndimgs["gnd"].get_width()/2), gndpos.y+int(gndsize.y/2))
 gndrect = getRect(gndimgs["gnd"], gndposrect)
 ceilingrect = pygame.Rect(0,-5,globalw,5)
+pipewthcenter = int(pipeimgs["nrml"].get_width()/2)
+pipehtcenter = int(pipeimgs["nrml"].get_width()/2)
