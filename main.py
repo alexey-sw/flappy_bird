@@ -16,17 +16,23 @@ pygame.init()
 
 
 class Pipe:
-    def __init__(self, image, x, y):
-        self.x = x # *coords of left top corner
+    def __init__(self, image, x, y,scalecoeff):
+        self.sclcoeff = scalecoeff
+        self.x = x  # *coords of left top corner
         self.y = y
-        self.image = image
+        self.image = pygame.transform.scale(image,(pipewidth,int(pipeheight*scalecoeff)))
         self.speed = 1
-        self.rect = getRect(self.image, \
-            Vec(self.x+pipewthcenter,self.y+pipehtcenter))  # * x,y of pipe center
+        self.rect = getRect(self.image,
+            Vec(self.x+pipewthcenter, self.y+(pipehtcenter)*scalecoeff))  # * x,y of pipe cente
+        
     def update(self):
-        self.x-=self.speed
-        self.rect.x-=self.speed
-        scr.blit(self.image,[self.x,self.y])
+        self.x -= self.speed
+        self.rect.x -= self.speed
+        scr.blit(self.image, [self.x, self.y])
+        pygame.draw.rect(scr,(255,0,0),self.rect,4)
+
+    def freeze(self):
+        scr.blit(self.image, [self.x, self.y])
 
 
 class Bird:
@@ -99,8 +105,8 @@ class Game:
         self.h = globalh
         # * size of our background
         # for obj in self objects: i.update
-        self.updateobjects = [self.bird]#* objects that i need to update
-
+        self.updateobjects = [self.bird]  # * objects that i need to update
+        self.freezeobjects = [self.bird]
         self.collideobjects = [self.gndobj, self.ceiling]
 
     def start(self):
@@ -110,7 +116,7 @@ class Game:
 
     def update(self):
         if not self.pipecreated:
-            self.createPipe(400,100)
+            self.createPipeRow(400,400)
             self.pipecreated = True
             print("here")
 
@@ -119,18 +125,23 @@ class Game:
             if not self.bird.collide(obj.rect):
                 pass
             else:
-                self.bird.freeze()
                 self.frozen = True
                 break
         if not self.frozen:
             for obj in self.updateobjects:
                 obj.update()
+        else:
+            for obj in self.freezeobjects:
+                obj.freeze()
         pygame.display.flip()
 
-    def createPipe(self, x, y):
-        pipe = Pipe(pipeimgs["nrml"],x,y)
-        self.updateobjects.append(pipe)
-        self.collideobjects.append(pipe)
+    def createPipeRow(self, x, y):
+        pipe = Pipe(pipeimgs["nrml"], x, y,0.4)
+        rvrpipe = Pipe(pipeimgs["revr"],x,y-200,0.4)
+        self.updateobjects+=[pipe,rvrpipe]
+        self.collideobjects+=[pipe,rvrpipe]
+        self.freezeobjects+=[pipe,rvrpipe]
+        
 
 ceiling = Ceiling(ceilingrect)
 ground = Ground(gndrect)

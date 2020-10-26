@@ -62,7 +62,8 @@ load()
 
 def getRect(img, obj):
     return img.get_rect(center=(obj.x, obj.y))
-
+def scaleImg(img,coeffs):
+    pass
 
 birdrect = getRect(birdimgs[0], Vec(50+int(birdimgs[0].get_width()/2), 50))
 gndpos = Vec(0, globalh-gndsize.y)
@@ -70,5 +71,14 @@ gndposrect = Vec(
     0+int(gndimgs["gnd"].get_width()/2), gndpos.y+int(gndsize.y/2))
 gndrect = getRect(gndimgs["gnd"], gndposrect)
 ceilingrect = pygame.Rect(0,-5,globalw,5)
+
+
+
+#!pipes
 pipewthcenter = int(pipeimgs["nrml"].get_width()/2)
-pipehtcenter = int(pipeimgs["nrml"].get_width()/2)
+pipehtcenter = int(pipeimgs["nrml"].get_height()/2)
+nrmlpipelev = globalh-gndsize.y # level of ground
+chutelev = nrmlpipelev-int(pipeimgs["nrml"].get_height())
+pipewidth = int(pipeimgs["nrml"].get_width())
+pipeheight = int(pipeimgs["nrml"].get_height())
+
