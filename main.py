@@ -47,8 +47,8 @@ class Bird:
         if self.coefficient<1:
             self.coefficient+=0.03
         if self.subtractor>0:
-            self.subtractor-=0.02
-
+            self.subtractor-=0.01
+        print(self.coefficient)
         
 
         self.coord.y -= self.speed.y
