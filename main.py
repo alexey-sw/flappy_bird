@@ -10,6 +10,8 @@ import sys
 from load import *
 import os
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # to center the window
+from random import uniform
+
 
 pygame.init()
 # would be great to implement clock.get_fps()
@@ -94,7 +96,7 @@ class Ceiling:
 class Game:
     frozen = False
     pipecreated = False
-
+    gap = 100
     def __init__(self, bird, gndimg, gndobj):
         self.gndimg = gndimg
         self.gndobj = gndobj
@@ -116,9 +118,8 @@ class Game:
 
     def update(self):
         if not self.pipecreated:
-            self.createPipeRow(400,400)
+            self.createPipeRow(400)
             self.pipecreated = True
-            print("here")
 
         scr.blit(self.gndimg, (gndpos.x, gndpos.y))
         for obj in self.collideobjects:
@@ -134,10 +135,22 @@ class Game:
             for obj in self.freezeobjects:
                 obj.freeze()
         pygame.display.flip()
-
-    def createPipeRow(self, x, y):
-        pipe = Pipe(pipeimgs["nrml"], x, y,0.4)
-        rvrpipe = Pipe(pipeimgs["revr"],x,y-200,0.4)
+    def Scalepipe(self,gap): #generates rows with pipes of random size
+        # outputs scale of the firstpipe,second pipe 
+        # calculates gap between pipes
+        avheight = nrmlpipelev-gap
+        coeff1 = uniform(0.2,0.8) # coeff of the normal pipe
+        secondpipeheight = avheight - pipeheight*coeff1
+        coeff2 = (secondpipeheight/pipeheight)
+        # calculating y of transformed pipe
+        ynrml = nrmlpipelev-int(pipeheight*coeff1) # y of normal pipe
+        print(coeff1,coeff2)
+        return [coeff1,coeff2,ynrml]
+    def createPipeRow(self, x):
+        metrics = self.Scalepipe(self.gap)
+        
+        pipe = Pipe(pipeimgs["nrml"], x, metrics[2],metrics[0])
+        rvrpipe = Pipe(pipeimgs["revr"],x,0,metrics[1])# y of reversed pipe equals 0(base level)
         self.updateobjects+=[pipe,rvrpipe]
         self.collideobjects+=[pipe,rvrpipe]
         self.freezeobjects+=[pipe,rvrpipe]

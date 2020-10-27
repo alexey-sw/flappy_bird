@@ -78,7 +78,6 @@ ceilingrect = pygame.Rect(0,-5,globalw,5)
 pipewthcenter = int(pipeimgs["nrml"].get_width()/2)
 pipehtcenter = int(pipeimgs["nrml"].get_height()/2)
 nrmlpipelev = globalh-gndsize.y # level of ground
-chutelev = nrmlpipelev-int(pipeimgs["nrml"].get_height())
 pipewidth = int(pipeimgs["nrml"].get_width())
 pipeheight = int(pipeimgs["nrml"].get_height())
 
