@@ -138,8 +138,13 @@ class Game:
     def Scalepipe(self,gap): #generates rows with pipes of random size
         # outputs scale of the firstpipe,second pipe 
         # calculates gap between pipes
+    
         avheight = nrmlpipelev-gap
-        coeff1 = uniform(0.2,0.8) # coeff of the normal pipe
+        maxcoeff = ((avheight-35)/pipeheight) # 20 px is minimal height of the pipe
+        
+        mincoeff= (35/pipeheight)
+        print(mincoeff,maxcoeff)
+        coeff1 = uniform(mincoeff,maxcoeff) # coeff of the normal pipe
         secondpipeheight = avheight - pipeheight*coeff1
         coeff2 = (secondpipeheight/pipeheight)
         # calculating y of transformed pipe
