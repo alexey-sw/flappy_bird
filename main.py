@@ -5,33 +5,35 @@
 
 
 # score will be added later
+from random import uniform
 import pygame
 import sys
 from load import *
 import os
+from time import time
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # to center the window
-from random import uniform
 
 
-pygame.init()
 # would be great to implement clock.get_fps()
 
 
 class Pipe:
-    def __init__(self, image, x, y,scalecoeff):
+    def __init__(self, image, x, y, scalecoeff):
         self.sclcoeff = scalecoeff
         self.x = x  # *coords of left top corner
         self.y = y
-        self.image = pygame.transform.scale(image,(pipewidth,int(pipeheight*scalecoeff)))
+        self.image = pygame.transform.scale(
+            image, (pipewidth, int(pipeheight*scalecoeff)))
         self.speed = 1
         self.rect = getRect(self.image,
-            Vec(self.x+pipewthcenter, self.y+(pipehtcenter)*scalecoeff))  # * x,y of pipe cente
-        
-    def update(self):
+                            Vec(self.x+pipewthcenter, self.y+(pipehtcenter)*scalecoeff))  # * x,y of pipe cente
+
+    def update(self, speed):
+        self.speed = speed
         self.x -= self.speed
         self.rect.x -= self.speed
         scr.blit(self.image, [self.x, self.y])
-        pygame.draw.rect(scr,(255,0,0),self.rect,4)
+        pygame.draw.rect(scr, (255, 0, 0), self.rect, 4)
 
     def freeze(self):
         scr.blit(self.image, [self.x, self.y])
@@ -96,8 +98,10 @@ class Ceiling:
 class Game:
     frozen = False
     pipecreated = False
-    gap = 100
+    chutegap = 200
+
     def __init__(self, bird, gndimg, gndobj):
+        self.startime = 0
         self.gndimg = gndimg
         self.gndobj = gndobj
         self.ceiling = ceiling
@@ -105,20 +109,32 @@ class Game:
         self.state = "playing"
         self.w = globalw
         self.h = globalh
-        # * size of our background
-        # for obj in self objects: i.update
+        self.pipespeed = 1  # x speed of the pipes
         self.updateobjects = [self.bird]  # * objects that i need to update
         self.freezeobjects = [self.bird]
         self.collideobjects = [self.gndobj, self.ceiling]
+        self.lastpipex = 400  # x of the last pipe row
+        self.maxrowgap = 200  # chutegap between pipe rows
 
     def start(self):
         global scr
         scr = pygame.display.set_mode((self.w, self.h))
+        self.startime = time()
+        print(self.startime)
         pygame.display.set_caption("Flappy bird")
 
     def update(self):
+        currenttime = time()
+        if currenttime-self.startime > 20:  # 20 seconds elapsed
+            self.startime = currenttime
+            self.pipespeed += 1
+
+        self.lastpipex -= self.pipespeed
+        self.needNextPipe()
         if not self.pipecreated:
-            self.createPipeRow(400)
+
+            # 400 is x of the very first piperow
+            self.createPipeRow(self.calculateNextPipe())
             self.pipecreated = True
 
         scr.blit(self.gndimg, (gndpos.x, gndpos.y))
@@ -130,42 +146,58 @@ class Game:
                 break
         if not self.frozen:
             for obj in self.updateobjects:
-                obj.update()
+                if isinstance(obj, Pipe):
+                    obj.update(self.pipespeed)
+                else:
+                    obj.update()
         else:
             for obj in self.freezeobjects:
                 obj.freeze()
         pygame.display.flip()
-    def Scalepipe(self,gap): #generates rows with pipes of random size
-        # outputs scale of the firstpipe,second pipe 
-        # calculates gap between pipes
-    
-        avheight = nrmlpipelev-gap
-        maxcoeff = ((avheight-35)/pipeheight) # 20 px is minimal height of the pipe
-        
-        mincoeff= (35/pipeheight)
-        print(mincoeff,maxcoeff)
-        coeff1 = uniform(mincoeff,maxcoeff) # coeff of the normal pipe
+
+    def Scalepipe(self, chutegap):  # generates rows with pipes of random size
+        # outputs scale of the firstpipe,second pipe
+        # calculates chutegap between pipes
+
+        avheight = nrmlpipelev-chutegap
+        # 20 px is minimal height of the pipe
+        maxcoeff = ((avheight-35)/pipeheight)
+
+        mincoeff = (35/pipeheight)
+        coeff1 = uniform(mincoeff, maxcoeff)  # coeff of the normal pipe
         secondpipeheight = avheight - pipeheight*coeff1
         coeff2 = (secondpipeheight/pipeheight)
         # calculating y of transformed pipe
-        ynrml = nrmlpipelev-int(pipeheight*coeff1) # y of normal pipe
-        print(coeff1,coeff2)
-        return [coeff1,coeff2,ynrml]
+        ynrml = nrmlpipelev-int(pipeheight*coeff1)  # y of normal pipe
+        return [coeff1, coeff2, ynrml]
+
     def createPipeRow(self, x):
-        metrics = self.Scalepipe(self.gap)
-        
-        pipe = Pipe(pipeimgs["nrml"], x, metrics[2],metrics[0])
-        rvrpipe = Pipe(pipeimgs["revr"],x,0,metrics[1])# y of reversed pipe equals 0(base level)
-        self.updateobjects+=[pipe,rvrpipe]
-        self.collideobjects+=[pipe,rvrpipe]
-        self.freezeobjects+=[pipe,rvrpipe]
-        
+        self.lastpipex = x
+        metrics = self.Scalepipe(self.chutegap)
+        pipe = Pipe(pipeimgs["nrml"], x, metrics[2], metrics[0])
+        # y of reversed pipe equals 0(base level)
+        rvrpipe = Pipe(pipeimgs["revr"], x, 0, metrics[1])
+        self.updateobjects += [pipe, rvrpipe]
+        self.collideobjects += [pipe, rvrpipe]
+        self.freezeobjects += [pipe, rvrpipe]
+
+    def needNextPipe(self):
+        if globalw-self.lastpipex > self.maxrowgap-20:
+            self.pipecreated = False
+
+    def calculateNextPipe(self):  # returns x of next pipe row
+        print(list(self.updateobjects))
+        x_of_nextpiperow = globalw+18
+        self.lastpipex = x_of_nextpiperow
+        return x_of_nextpiperow
+
 
 ceiling = Ceiling(ceilingrect)
 ground = Ground(gndrect)
 flappy_bird = Bird(birdimgs)
 game = Game(flappy_bird, gndimgs["gnd"], ground)
 game.start()
+pygame.init()
 while 1:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
