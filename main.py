@@ -101,8 +101,10 @@ class Game:
     frozen = False
     pipecreated = False
     chutegap = 200
-
-    def __init__(self, bird, gndimg, gndobj):
+    minchutegap = 100 
+    
+    def __init__(self, bird, gndimg, gndobj,bgimg):
+        self.bgimg = bgimg
         self.startime = 0
         self.gndimg = gndimg
         self.gndobj = gndobj
@@ -116,7 +118,7 @@ class Game:
         self.freezeobjects = [self.bird]
         self.collideobjects = [self.gndobj, self.ceiling]
         self.lastpipex = 400  # x of the last pipe row
-        self.maxrowgap = 200  # chutegap between pipe rows
+        self.maxrowgap = 200  # gap between pipe rows
 
     def start(self):
         global scr
@@ -138,7 +140,7 @@ class Game:
             # 400 is x of the very first piperow
             self.createPipeRow(self.calculateNextPipe())
             self.pipecreated = True
-
+        scr.blit(self.bgimg,(0,0)) # background 
         scr.blit(self.gndimg, (gndpos.x, gndpos.y))
         
         if not self.frozen:
@@ -154,8 +156,12 @@ class Game:
             for obj in self.freezeobjects:
                 obj.freeze()
         timenow = time()
-        if timenow-self.startime >2:
-            self.chutegap =self.chutegap-randint(10,20)
+
+        if timenow-self.startime >10 and self.chutegap!=self.minchutegap:
+            self.chutegap =self.chutegap-randint(1,5)
+            if self.chutegap<self.minchutegap:
+                self.chutegap = self.minchutegap
+                
         pygame.display.flip()
 
     def Scalepipe(self, chutegap):  # generates rows with pipes of random size
@@ -182,8 +188,6 @@ class Game:
         # y of reversed pipe equals 0(base level)
         rvrpipe = Pipe(pipeimgs["revr"], x, 0, metrics[1])
         self.updateobjects += [pipe, rvrpipe]
-        print(self.updateobjects)
-        print(self.updateobjects[1],self.updateobjects[2])
         self.collideobjects += [pipe, rvrpipe]
         self.freezeobjects += [pipe, rvrpipe]
 
@@ -211,7 +215,7 @@ class Game:
 ceiling = Ceiling(ceilingrect)
 ground = Ground(gndrect)
 flappy_bird = Bird(birdimgs)
-game = Game(flappy_bird, gndimgs["gnd"], ground)
+game = Game(flappy_bird, gndimgs["gnd"], ground,gndimgs["bgrnd"])
 game.start()
 pygame.init()
 while 1:

@@ -44,7 +44,7 @@ def load():  # function responsible for loading and scaling images
     ]
 
     global gndimgs
-    gndimgs = {"bgrnd": pygame.image.load("images/background.jpg"),
+    gndimgs = {"bgrnd": pygame.transform.scale(pygame.image.load("images/background.jpg"),(globalw,globalh)),
                "gnd": pygame.transform.scale(pygame.image.load("images/gnd.png"), (gndsize.x, gndsize.y))}
 
     global pipeimgs
