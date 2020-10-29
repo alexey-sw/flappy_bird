@@ -3,9 +3,10 @@
 # ? git stash clear
 # ? git stash list - outputs list of stashes
 
+#! need to work on speed of the pipe, gap change and so on
 
 # score will be added later
-from random import uniform
+from random import randint,uniform
 import pygame
 import sys
 from load import *
@@ -37,7 +38,8 @@ class Pipe:
 
     def freeze(self):
         scr.blit(self.image, [self.x, self.y])
-
+    def __repr__(self):
+        return str(self.y )
 
 class Bird:
     flapcount = 0
@@ -109,7 +111,7 @@ class Game:
         self.state = "playing"
         self.w = globalw
         self.h = globalh
-        self.pipespeed = 1  # x speed of the pipes
+        self.pipespeed = 3  # x speed of the pipes
         self.updateobjects = [self.bird]  # * objects that i need to update
         self.freezeobjects = [self.bird]
         self.collideobjects = [self.gndobj, self.ceiling]
@@ -120,17 +122,17 @@ class Game:
         global scr
         scr = pygame.display.set_mode((self.w, self.h))
         self.startime = time()
-        print(self.startime)
         pygame.display.set_caption("Flappy bird")
 
     def update(self):
-        currenttime = time()
-        if currenttime-self.startime > 20:  # 20 seconds elapsed
-            self.startime = currenttime
-            self.pipespeed += 1
-
-        self.lastpipex -= self.pipespeed
-        self.needNextPipe()
+        for obj in self.collideobjects:
+            if not self.bird.collide(obj.rect):
+                pass
+            else:
+                self.frozen = True
+                self.pipecreated= True
+                break
+        
         if not self.pipecreated:
 
             # 400 is x of the very first piperow
@@ -138,13 +140,11 @@ class Game:
             self.pipecreated = True
 
         scr.blit(self.gndimg, (gndpos.x, gndpos.y))
-        for obj in self.collideobjects:
-            if not self.bird.collide(obj.rect):
-                pass
-            else:
-                self.frozen = True
-                break
+        
         if not self.frozen:
+            self.deleteRow()
+            self.lastpipex -= self.pipespeed
+            self.needNextPipe()
             for obj in self.updateobjects:
                 if isinstance(obj, Pipe):
                     obj.update(self.pipespeed)
@@ -153,6 +153,9 @@ class Game:
         else:
             for obj in self.freezeobjects:
                 obj.freeze()
+        timenow = time()
+        if timenow-self.startime >2:
+            self.chutegap =self.chutegap-randint(10,20)
         pygame.display.flip()
 
     def Scalepipe(self, chutegap):  # generates rows with pipes of random size
@@ -172,12 +175,15 @@ class Game:
         return [coeff1, coeff2, ynrml]
 
     def createPipeRow(self, x):
+        
         self.lastpipex = x
         metrics = self.Scalepipe(self.chutegap)
         pipe = Pipe(pipeimgs["nrml"], x, metrics[2], metrics[0])
         # y of reversed pipe equals 0(base level)
         rvrpipe = Pipe(pipeimgs["revr"], x, 0, metrics[1])
         self.updateobjects += [pipe, rvrpipe]
+        print(self.updateobjects)
+        print(self.updateobjects[1],self.updateobjects[2])
         self.collideobjects += [pipe, rvrpipe]
         self.freezeobjects += [pipe, rvrpipe]
 
@@ -186,11 +192,21 @@ class Game:
             self.pipecreated = False
 
     def calculateNextPipe(self):  # returns x of next pipe row
-        print(list(self.updateobjects))
         x_of_nextpiperow = globalw+18
         self.lastpipex = x_of_nextpiperow
         return x_of_nextpiperow
-
+    def deleteRow(self): # deletes pipes that are out of the screen
+        #! bugreport : deletes objects that are still on the screen
+        
+        if len(self.updateobjects)>1 and self.updateobjects[1].x<-100:
+            for i in range(2):
+                deletedobj2 = self.updateobjects.pop(1)
+                
+                deletedobj1 = self.freezeobjects.pop(1)
+                deletedobj3 = self.collideobjects.pop(2)
+                del deletedobj1,deletedobj2,deletedobj3
+                
+                
 
 ceiling = Ceiling(ceilingrect)
 ground = Ground(gndrect)
