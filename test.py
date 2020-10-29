@@ -1,16 +1,6 @@
-class A:
-    def __init__(self,a):
-        self.a = a
-    def __repr__(self):
-        return "hello"
-alex = A(5)
-nik = A(3)
-
-array= []
-array.append(nik)
-array.append(alex)
-
-del array[1]
-del alex
-print(alex)
-print(array[1])
+from statistics import *
+from random import randint
+arr = []
+for i in range(0,1000):
+    arr.append(randint(-1000,1000))
+print(mean(arr))

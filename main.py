@@ -34,7 +34,7 @@ class Pipe:
         self.x -= self.speed
         self.rect.x -= self.speed
         scr.blit(self.image, [self.x, self.y])
-        pygame.draw.rect(scr, (255, 0, 0), self.rect, 4)
+        
 
     def freeze(self):
         scr.blit(self.image, [self.x, self.y])
@@ -98,12 +98,13 @@ class Ceiling:
 
 
 class Game:
-    frozen = False
-    pipecreated = False
-    chutegap = 200
-    minchutegap = 100 
     
     def __init__(self, bird, gndimg, gndobj,bgimg):
+        self.frozen = False
+        self.pipecreated = True
+        self.chutegap = 200
+        self.minchutegap = 100 
+        self.gapchange = 0
         self.bgimg = bgimg
         self.startime = 0
         self.gndimg = gndimg
@@ -117,8 +118,10 @@ class Game:
         self.updateobjects = [self.bird]  # * objects that i need to update
         self.freezeobjects = [self.bird]
         self.collideobjects = [self.gndobj, self.ceiling]
-        self.lastpipex = 400  # x of the last pipe row
-        self.maxrowgap = 200  # gap between pipe rows
+        self.lastpipex = 200  # x of the last pipe row
+        self.minrowgap = 170  # gap between pipe rows
+        self.rowgap = 600
+        self.firstpipe =True
 
     def start(self):
         global scr
@@ -127,6 +130,7 @@ class Game:
         pygame.display.set_caption("Flappy bird")
 
     def update(self):
+        
         for obj in self.collideobjects:
             if not self.bird.collide(obj.rect):
                 pass
@@ -135,15 +139,15 @@ class Game:
                 self.pipecreated= True
                 break
         
-        if not self.pipecreated:
-
-            # 400 is x of the very first piperow
-            self.createPipeRow(self.calculateNextPipe())
-            self.pipecreated = True
+        
         scr.blit(self.bgimg,(0,0)) # background 
         scr.blit(self.gndimg, (gndpos.x, gndpos.y))
         
         if not self.frozen:
+            # print(self.gapchange)
+            if not self.pipecreated:
+                self.createPipeRow(self.calculateNextPipe())
+                self.pipecreated = True
             self.deleteRow()
             self.lastpipex -= self.pipespeed
             self.needNextPipe()
@@ -156,11 +160,16 @@ class Game:
             for obj in self.freezeobjects:
                 obj.freeze()
         timenow = time()
-
-        if timenow-self.startime >10 and self.chutegap!=self.minchutegap:
+        
+        if timenow-self.startime >15 and self.chutegap!=self.minchutegap:
             self.chutegap =self.chutegap-randint(1,5)
+            self.startime = timenow
             if self.chutegap<self.minchutegap:
                 self.chutegap = self.minchutegap
+            self.rowgap = self.rowgap-randint(10,20)
+            if self.rowgap<self.minrowgap:
+                self.rowgap = self.minrowgap
+                
                 
         pygame.display.flip()
 
@@ -192,8 +201,10 @@ class Game:
         self.freezeobjects += [pipe, rvrpipe]
 
     def needNextPipe(self):
-        if globalw-self.lastpipex > self.maxrowgap-20:
+        
+        if globalw-self.lastpipex-self.gapchange > self.rowgap-20:
             self.pipecreated = False
+            self.gapchange = randint(-30,30)
 
     def calculateNextPipe(self):  # returns x of next pipe row
         x_of_nextpiperow = globalw+18
