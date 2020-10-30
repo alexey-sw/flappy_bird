@@ -1,11 +1,3 @@
-# ? git stash apply - num of latest stash
-# ? git stash pop - applies latest stash and deletes it from the list
-# ? git stash clear
-# ? git stash list - outputs list of stashes
-
-#! need to work on speed of the pipe, gap change and so on
-
-# score will be added later
 from random import randint,uniform
 import pygame
 import sys
@@ -15,17 +7,16 @@ from time import time
 os.environ['SDL_VIDEO_CENTERED'] = '1'  # to center the window
 
 
-# would be great to implement clock.get_fps()
 
 
 class Pipe:
-    def __init__(self, image, x, y, scalecoeff):
+    def __init__(self, image, x, y, scalecoeff,pipespeed):
         self.sclcoeff = scalecoeff
         self.x = x  # *coords of left top corner
         self.y = y
         self.image = pygame.transform.scale(
             image, (pipewidth, int(pipeheight*scalecoeff)))
-        self.speed = 1
+        self.speed = pipespeed
         self.rect = getRect(self.image,
                             Vec(self.x+pipewthcenter, self.y+(pipehtcenter)*scalecoeff))  # * x,y of pipe cente
 
@@ -49,9 +40,10 @@ class Bird:
 
     def __init__(self, images):
         self.images = images  # array
-        self.coord = Vec(50, 50)  # starting position
+        self.coord = Vec(50, 100)  # starting position
         self.speed = Vec(0, 0)  # starting speed
         self.rect = birdrect
+        self.mincoeff = 0.2
 
     def collide(self, another_rect):  # returns true if bird collides with pipes or ground or ceiling
         if self.rect.colliderect(another_rect):
@@ -65,13 +57,13 @@ class Bird:
         if self.flapcount > 998:
             self.flapcount = 0
         if self.whitespace_pressed:
-            self.speed.add(0, 8*self.coefficient)
+            self.subtractor += 0.03
             self.coefficient -= self.subtractor
-            self.subtractor += 0.1
+            self.speed.add(0, 9*self.coefficient)
             self.whitespace_pressed = False
         self.speed.subtract(0, 0.4)
         if self.coefficient < 1:
-            self.coefficient += 0.03
+            self.coefficient += 0.002
         if self.subtractor > 0:
             self.subtractor -= 0.01
 
@@ -120,8 +112,9 @@ class Game:
         self.collideobjects = [self.gndobj, self.ceiling]
         self.lastpipex = 200  # x of the last pipe row
         self.minrowgap = 170  # gap between pipe rows
-        self.rowgap = 600
+        self.rowgap = 450
         self.firstpipe =True
+        self.count=0
 
     def start(self):
         global scr
@@ -142,7 +135,7 @@ class Game:
         
         scr.blit(self.bgimg,(0,0)) # background 
         scr.blit(self.gndimg, (gndpos.x, gndpos.y))
-        
+        self.displayCount()
         if not self.frozen:
             # print(self.gapchange)
             if not self.pipecreated:
@@ -156,6 +149,7 @@ class Game:
                     obj.update(self.pipespeed)
                 else:
                     obj.update()
+            self.countUpdate(self.bird)
         else:
             for obj in self.freezeobjects:
                 obj.freeze()
@@ -193,13 +187,27 @@ class Game:
         
         self.lastpipex = x
         metrics = self.Scalepipe(self.chutegap)
-        pipe = Pipe(pipeimgs["nrml"], x, metrics[2], metrics[0])
+        pipe = Pipe(pipeimgs["nrml"], x, metrics[2], metrics[0],self.pipespeed)
         # y of reversed pipe equals 0(base level)
-        rvrpipe = Pipe(pipeimgs["revr"], x, 0, metrics[1])
+        rvrpipe = Pipe(pipeimgs["revr"], x, 0, metrics[1],self.pipespeed)
         self.updateobjects += [pipe, rvrpipe]
         self.collideobjects += [pipe, rvrpipe]
         self.freezeobjects += [pipe, rvrpipe]
+    def countUpdate(self,bird):
+        if len(self.updateobjects)>1:
+            firstpipex = self.updateobjects[1].x
+            if firstpipex+pipewidth<bird.coord.x and firstpipex+pipewidth+self.pipespeed>bird.coord.x:
+                self.count+=1
+                print(self.count)
 
+    def displayCount(self):
+        font_size = 30
+        counter_font = pygame.font.SysFont("Verdana",font_size)
+        textpos = [int(globalw/2),100]
+        antiliasing = 0
+        color = (0,0,0)
+        textsurface = counter_font.render(str(self.count),antiliasing,color)
+        scr.blit(textsurface,textpos)
     def needNextPipe(self):
         
         if globalw-self.lastpipex-self.gapchange > self.rowgap-20:
@@ -230,6 +238,7 @@ game = Game(flappy_bird, gndimgs["gnd"], ground,gndimgs["bgrnd"])
 pygame.display.set_icon(programmicon)
 game.start()
 pygame.init()
+pygame
 while 1:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
