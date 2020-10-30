@@ -81,3 +81,6 @@ nrmlpipelev = globalh-gndsize.y # level of ground
 pipewidth = int(pipeimgs["nrml"].get_width())
 pipeheight = int(pipeimgs["nrml"].get_height())
 
+
+#! icon
+programmicon = pygame.image.load("images/redbird-midflap.png")

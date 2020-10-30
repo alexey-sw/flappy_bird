@@ -227,6 +227,7 @@ ceiling = Ceiling(ceilingrect)
 ground = Ground(gndrect)
 flappy_bird = Bird(birdimgs)
 game = Game(flappy_bird, gndimgs["gnd"], ground,gndimgs["bgrnd"])
+pygame.display.set_icon(programmicon)
 game.start()
 pygame.init()
 while 1:
