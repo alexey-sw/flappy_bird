@@ -1,13 +1,18 @@
+# * this file contains game assets and makes it easier to use assets in main file
+# import of all main libraries
 import pygame
-# *this file loads all the files of the game
-# * this file contains prescales all the images
-# * this file hitmasks
+from random import randint, uniform
+import sys
+from load import *
+import os
+from time import time
 FPS = 60
-black = 0, 0, 0
 clock = pygame.time.Clock()
 globalh = 360*2
 globalw = 288*2
-gndh = 60
+gndh = 60 #* height of our ground
+os.environ['SDL_VIDEO_CENTERED'] = '1'  # * centering pygame window
+
 
 
 class Vec:
@@ -44,7 +49,7 @@ def load():  # function responsible for loading and scaling images
     ]
 
     global gndimgs
-    gndimgs = {"bgrnd": pygame.transform.scale(pygame.image.load("images/background.jpg"),(globalw,globalh)),
+    gndimgs = {"bgrnd": pygame.transform.scale(pygame.image.load("images/background.jpg"), (globalw, globalh)),
                "gnd": pygame.transform.scale(pygame.image.load("images/gnd.png"), (gndsize.x, gndsize.y))}
 
     global pipeimgs
@@ -53,31 +58,25 @@ def load():  # function responsible for loading and scaling images
 
 
 load()
-# global piperectrev
-#     birdrect =  birdimgs[0].get_rect()
-#     piperect = pipeimgs["nrml"].get_rect()
-#     piperectrev = pipeimgs["revr"].get_rect()
-#     gndrect = gndimgs["gnd"].get_rect()
 
 
 def getRect(img, obj):
     return img.get_rect(center=(obj.x, obj.y))
-def scaleImg(img,coeffs):
-    pass
 
-birdrect = getRect(birdimgs[0], Vec(50+int(birdimgs[0].get_width()/2), 50))
-gndpos = Vec(0, globalh-gndsize.y)
+
+gndpos = Vec(0, globalh-gndsize.y)  # * ground position
 gndposrect = Vec(
     0+int(gndimgs["gnd"].get_width()/2), gndpos.y+int(gndsize.y/2))
+# * hitmaks
+birdrect = getRect(birdimgs[0], Vec(50+int(birdimgs[0].get_width()/2), 50))
 gndrect = getRect(gndimgs["gnd"], gndposrect)
-ceilingrect = pygame.Rect(0,-5,globalw,5)
+ceilingrect = pygame.Rect(0, -5, globalw, 5)
 
 
-
-#!pipes
+#!pipes variables
 pipewthcenter = int(pipeimgs["nrml"].get_width()/2)
 pipehtcenter = int(pipeimgs["nrml"].get_height()/2)
-nrmlpipelev = globalh-gndsize.y # level of ground
+nrmlpipelev = globalh-gndsize.y  # level of ground
 pipewidth = int(pipeimgs["nrml"].get_width())
 pipeheight = int(pipeimgs["nrml"].get_height())
 
